@@ -46,4 +46,40 @@ async function uploadImage (req,res) {
     }
 }
 
-export { uploadImage };
+async function getImage (req,res) {
+    try {
+        console.log("get", "getImage");
+        const code = req.params.code;
+
+        const db = client.db("uploads");
+        const collection = db.collection("images");
+
+        const rec = await collection.findOne({ code: code });
+
+        if (!rec) {
+            // response 404
+            res.status(404).json({
+                message: 'Image not found'
+            });
+            return;
+        }
+
+        // response 200
+        res.status(200).json({
+            message: 'Image fetched successfully',
+            url: rec.url
+        });
+    }
+    catch(error)
+    {
+        console.error(`Error fetching image: ${error}`);
+        // response_500(res, 'Error creating result:', error);
+        res.status(500).json({
+            message: 'Error fetching image',
+            error: error
+        });
+
+    }
+}
+
+export { uploadImage, getImage };

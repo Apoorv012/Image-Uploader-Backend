@@ -18,6 +18,11 @@ app.get('/', async (req, res) => {
     console.log("get", "Hello World");
 });
 
+app.get('/ping', async (req, res) => {
+    res.send('pong');
+    console.log("get", "pong");
+});
+
 app.use('/api', router);
 
 app.listen(PORT, () => {
