@@ -3,7 +3,6 @@ import router from './routes/index.routes.js';
 import dotenv from 'dotenv';
 import { connDB } from './config/db.config.js';
 import cors from 'cors';
-import { codeExistsInDatabase } from './utils/code_generation.js';
 
 dotenv.config();
 
@@ -25,7 +24,7 @@ app.get('/ping', async (req, res) => {
 
 app.use('/api', router);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`🚀 Server is running on port ${PORT} : http://localhost:${PORT}`);
-    connDB();
+    await connDB();
 });
