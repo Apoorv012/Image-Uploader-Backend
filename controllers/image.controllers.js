@@ -7,16 +7,39 @@ import client from "../config/db.config.js"
 import { getUniqueCodeFromMongoDB } from "../utils/code_generation.js";
 
 async function uploadImage (req,res) {
+    console.log("post", "uploadImage");
+    console.log("filepath", req.file.originalname);
+
+    const localFilePath = req.file.path;
+    let cloudinaryURL;
+
     try {
-        console.log("post", "uploadImage");
-        console.log("filepath", req.file.originalname);
+        cloudinaryURL = await uploadImageToCloudinary(localFilePath);
+    } catch (err) {
+        console.error(`Error uploading image:`, err);
+        res.status(413).json({
+            message: 'Error uploading image',
+            error: err.message
+        });
+        return;
+    };
 
-        const localFilePath = req.file.path;
-        const cloudinaryURL = await uploadImageToCloudinary(localFilePath);
+    console.log("cloudinaryURL", cloudinaryURL.secure_url);
+    let code;
+    
+    try {
+        code = await getUniqueCodeFromMongoDB();
+    }
+    catch(error) {
+        console.error(`Error creating code:`, error);
+        res.status(500).json({
+            message: 'Error creating code',
+            error: error.message
+        });
+        return;
+    }
 
-        console.log("cloudinaryURL", cloudinaryURL.secure_url);
-        const code = await getUniqueCodeFromMongoDB();
-
+    try {
         const db = client.db("uploads");
         const collection = db.collection("images");
 
@@ -36,13 +59,12 @@ async function uploadImage (req,res) {
     }
     catch(error)
     {
-        console.error(`Error uploading image: ${error}`);
+        console.error(`Error uploading image:`, error);
         // response_500(res, 'Error creating result:', error);
         res.status(500).json({
             message: 'Error uploading image',
-            error: error
+            error: error.message
         });
-
     }
 }
 

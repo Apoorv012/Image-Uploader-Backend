@@ -24,6 +24,7 @@ const uploadImageToCloudinary = async (localFilePath) => {
     catch (err) {
         console.error(err);
         fs.unlinkSync(localFilePath);
+        throw new Error(err.message);
     }
 }
 
