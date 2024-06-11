@@ -8,7 +8,6 @@ import { getUniqueCodeFromMongoDB } from "../utils/code_generation.js";
 
 async function uploadImage (req,res) {
     console.log("post", "uploadImage");
-    console.log("filepath", req.file.originalname);
 
     const localFilePath = req.file.path;
     let cloudinaryURL;
@@ -17,7 +16,7 @@ async function uploadImage (req,res) {
         cloudinaryURL = await uploadImageToCloudinary(localFilePath);
     } catch (err) {
         console.error(`Error uploading image:`, err);
-        res.status(413).json({
+        res.status(400).json({
             message: 'Error uploading image',
             error: err.message
         });

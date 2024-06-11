@@ -12,7 +12,6 @@ cloudinary.config({
 
 const uploadImageToCloudinary = async (localFilePath) => {
     try {
-        console.log(process.env.CLOUDINARY_API_KEY, process.env.CLOUDINARY_API_SECRET);
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "image"
         });
@@ -24,7 +23,7 @@ const uploadImageToCloudinary = async (localFilePath) => {
     catch (err) {
         console.error(err);
         fs.unlinkSync(localFilePath);
-        throw new Error(err.message);
+        throw err;
     }
 }
 
